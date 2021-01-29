@@ -1,0 +1,263 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="WriteRow" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data" xmlns:this="clr-namespace:" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
+    <x:Property Name="in_itemFields" Type="InArgument(scg:Dictionary(x:String, s:String[]))" />
+    <x:Property Name="in_invoiceFields" Type="InArgument(scg:Dictionary(x:String, x:String))" />
+    <x:Property Name="in_File" Type="InArgument(x:String)" />
+    <x:Property Name="in_dt_template" Type="InArgument(sd:DataTable)" />
+    <x:Property Name="in_fileName" Type="InArgument(x:String)" />
+  </x:Members>
+  <this:WriteRow.in_fileName>
+    <InArgument x:TypeArguments="x:String" />
+  </this:WriteRow.in_fileName>
+  <mva:VisualBasic.Settings>
+    <x:Null />
+  </mva:VisualBasic.Settings>
+  <sap:VirtualizedContainerService.HintSize>1220,2451</sap:VirtualizedContainerService.HintSize>
+  <sap2010:WorkflowViewState.IdRef>WriteRow_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <scg:List x:TypeArguments="x:String" Capacity="23">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Excel</x:String>
+      <x:String>System.Xml.Serialization</x:String>
+    </scg:List>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <scg:List x:TypeArguments="AssemblyReference" Capacity="25">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>System.ValueTuple</AssemblyReference>
+      <AssemblyReference>UiPath.Excel</AssemblyReference>
+      <AssemblyReference>UiPath.CV</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.Composition</AssemblyReference>
+      <AssemblyReference>System.ServiceModel</AssemblyReference>
+      <AssemblyReference>System.Memory</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities.Design</AssemblyReference>
+    </scg:List>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:Annotation.AnnotationText="Purpose: Step 5 of PDD, writes all items of 1 invoice to itemsToClaim spreadsheet&#xA;In: all fields/columns of spreadsheet read from config file, all values (via the invoiceFields dictionary)&#xA;Out: row(s) of information about items appended to copy for spreadsheet&#xA;Exceptions: none expected&#xA;" DisplayName="WriteRow" sap:VirtualizedContainerService.HintSize="689,2286" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:Int32" Default="[cint(in_config(&quot;columnCount&quot;).ToString)]" Name="columnCount" />
+      <Variable x:TypeArguments="s:String[]" Name="invoiceRow" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+        <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <ui:ClearDataTable sap2010:Annotation.AnnotationText="Always need to start with an empty template for a new invoice. Clear previous invoice data if they exist (they have already been appended to the excel file)." DataTable="[in_dt_template]" DisplayName="Clear Template Data Table" sap:VirtualizedContainerService.HintSize="647,124" sap2010:WorkflowViewState.IdRef="ClearDataTable_1">
+      <sap:WorkflowViewStateService.ViewState>
+        <scg:Dictionary x:TypeArguments="x:String, x:Object">
+          <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
+        </scg:Dictionary>
+      </sap:WorkflowViewStateService.ViewState>
+    </ui:ClearDataTable>
+    <ui:ForEach x:TypeArguments="x:Int32" CurrentIndex="{x:Null}" DisplayName="For Each item in current invoice" sap:VirtualizedContainerService.HintSize="647,1788" sap2010:WorkflowViewState.IdRef="ForEach`1_2" Values="[Enumerable.Range(0, in_itemFields(&quot;invoiceCategory&quot;).Count)]">
+      <ui:ForEach.Body>
+        <ActivityAction x:TypeArguments="x:Int32">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:Int32" Name="itemIndex" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Add item's fields to data table" sap:VirtualizedContainerService.HintSize="611,1654" sap2010:WorkflowViewState.IdRef="Sequence_2">
+            <Sequence.Variables>
+              <Variable x:TypeArguments="x:String" Name="reportedDepartment" />
+            </Sequence.Variables>
+            <sap:WorkflowViewStateService.ViewState>
+              <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+              </scg:Dictionary>
+            </sap:WorkflowViewStateService.ViewState>
+            <Assign DisplayName="Assign - create empty row (array)" sap:VirtualizedContainerService.HintSize="569,60" sap2010:WorkflowViewState.IdRef="Assign_1">
+              <Assign.To>
+                <OutArgument x:TypeArguments="s:String[]">[invoiceRow]</OutArgument>
+              </Assign.To>
+              <Assign.Value>
+                <InArgument x:TypeArguments="s:String[]">[Enumerable.Repeat("", columnCount).ToArray()]</InArgument>
+              </Assign.Value>
+            </Assign>
+            <ui:Comment DisplayName="TODO: Business Logic Placement?" sap:VirtualizedContainerService.HintSize="569,93" sap2010:WorkflowViewState.IdRef="Comment_5" Text="// Should such business logic (setting the reporting department name) be here in &quot;WriteRow&quot; ? Or in a separate workflow?" />
+            <If Condition="[in_itemFields(&quot;invoiceCategory&quot;)(itemIndex).Contains(&quot;Title&quot;)]" DisplayName="If there is &quot;Title&quot; in category, change department to &quot;Title Fee&quot;" sap:VirtualizedContainerService.HintSize="569,208" sap2010:WorkflowViewState.IdRef="If_1">
+              <If.Then>
+                <Assign DisplayName="Assign - change dept. to Title Fee" sap:VirtualizedContainerService.HintSize="262,60" sap2010:WorkflowViewState.IdRef="Assign_2">
+                  <Assign.To>
+                    <OutArgument x:TypeArguments="x:String">[reportedDepartment]</OutArgument>
+                  </Assign.To>
+                  <Assign.Value>
+                    <InArgument x:TypeArguments="x:String">Title Fee</InArgument>
+                  </Assign.Value>
+                </Assign>
+              </If.Then>
+              <If.Else>
+                <Assign DisplayName="Assign - Leave dept. as is" sap:VirtualizedContainerService.HintSize="262,60" sap2010:WorkflowViewState.IdRef="Assign_3">
+                  <Assign.To>
+                    <OutArgument x:TypeArguments="x:String">[reportedDepartment]</OutArgument>
+                  </Assign.To>
+                  <Assign.Value>
+                    <InArgument x:TypeArguments="x:String">[in_invoiceFields("invoiceDepartment")]</InArgument>
+                  </Assign.Value>
+                </Assign>
+              </If.Else>
+            </If>
+            <ui:MultipleAssign DisplayName="Multiple Assign - Set common fields" sap:VirtualizedContainerService.HintSize="569,377" sap2010:WorkflowViewState.IdRef="MultipleAssign_1">
+              <ui:MultipleAssign.AssignOperations>
+                <scg:List x:TypeArguments="ui:AssignOperation" Capacity="16">
+                  <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_1">
+                    <ui:AssignOperation.To>
+                      <OutArgument x:TypeArguments="x:String">[invoiceRow(cint(in_config("invoiceNumber").ToString))]</OutArgument>
+                    </ui:AssignOperation.To>
+                    <ui:AssignOperation.Value>
+                      <InArgument x:TypeArguments="x:String">[in_invoiceFields("invoiceNumber")]</InArgument>
+                    </ui:AssignOperation.Value>
+                  </ui:AssignOperation>
+                  <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_5">
+                    <ui:AssignOperation.To>
+                      <OutArgument x:TypeArguments="x:String">[invoiceRow(CInt(in_config("invoiceChkConfirmedDate").ToString))]</OutArgument>
+                    </ui:AssignOperation.To>
+                    <ui:AssignOperation.Value>
+                      <InArgument x:TypeArguments="x:String">[in_invoiceFields("invoiceChkConfirmedDate")]</InArgument>
+                    </ui:AssignOperation.Value>
+                  </ui:AssignOperation>
+                  <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_6">
+                    <ui:AssignOperation.To>
+                      <OutArgument x:TypeArguments="x:String">[invoiceRow(CInt(in_config("invoiceVendor").ToString))]</OutArgument>
+                    </ui:AssignOperation.To>
+                    <ui:AssignOperation.Value>
+                      <InArgument x:TypeArguments="x:String">[in_invoiceFields("invoiceVendor")]</InArgument>
+                    </ui:AssignOperation.Value>
+                  </ui:AssignOperation>
+                  <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_7">
+                    <ui:AssignOperation.To>
+                      <OutArgument x:TypeArguments="x:String">[invoiceRow(CInt(in_config("invoiceCategory").ToString))]</OutArgument>
+                    </ui:AssignOperation.To>
+                    <ui:AssignOperation.Value>
+                      <InArgument x:TypeArguments="x:String">[in_itemFields("invoiceCategory")(itemIndex)]</InArgument>
+                    </ui:AssignOperation.Value>
+                  </ui:AssignOperation>
+                  <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_8">
+                    <ui:AssignOperation.To>
+                      <OutArgument x:TypeArguments="x:String">[invoiceRow(CInt(in_config("invoiceSubCategory").ToString))]</OutArgument>
+                    </ui:AssignOperation.To>
+                    <ui:AssignOperation.Value>
+                      <InArgument x:TypeArguments="x:String">[in_itemFields("invoiceSubCategory")(itemIndex)]</InArgument>
+                    </ui:AssignOperation.Value>
+                  </ui:AssignOperation>
+                  <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_9">
+                    <ui:AssignOperation.To>
+                      <OutArgument x:TypeArguments="x:String">[invoiceRow(CInt(in_config("invoiceDepartment").ToString))]</OutArgument>
+                    </ui:AssignOperation.To>
+                    <ui:AssignOperation.Value>
+                      <InArgument x:TypeArguments="x:String">[reportedDepartment]</InArgument>
+                    </ui:AssignOperation.Value>
+                  </ui:AssignOperation>
+                  <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_13">
+                    <ui:AssignOperation.To>
+                      <OutArgument x:TypeArguments="x:String">[invoiceRow(CInt(in_config("invoiceQuantity").ToString))]</OutArgument>
+                    </ui:AssignOperation.To>
+                    <ui:AssignOperation.Value>
+                      <InArgument x:TypeArguments="x:String">[in_itemFields("invoiceQuantity")(itemIndex)]</InArgument>
+                    </ui:AssignOperation.Value>
+                  </ui:AssignOperation>
+                  <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_14">
+                    <ui:AssignOperation.To>
+                      <OutArgument x:TypeArguments="x:String">[invoiceRow(CInt(in_config("invoiceUnitPrice").ToString))]</OutArgument>
+                    </ui:AssignOperation.To>
+                    <ui:AssignOperation.Value>
+                      <InArgument x:TypeArguments="x:String">[in_itemFields("invoiceNet")(itemIndex)]</InArgument>
+                    </ui:AssignOperation.Value>
+                  </ui:AssignOperation>
+                  <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_23">
+                    <ui:AssignOperation.To>
+                      <OutArgument x:TypeArguments="x:String">[invoiceRow(CInt(in_config("invoiceFromDate").ToString))]</OutArgument>
+                    </ui:AssignOperation.To>
+                    <ui:AssignOperation.Value>
+                      <InArgument x:TypeArguments="x:String">[in_itemFields("invoiceItemDate")(itemIndex)]</InArgument>
+                    </ui:AssignOperation.Value>
+                  </ui:AssignOperation>
+                  <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_24">
+                    <ui:AssignOperation.To>
+                      <OutArgument x:TypeArguments="x:String">[invoiceRow(CInt(in_config("invoiceToDate").ToString))]</OutArgument>
+                    </ui:AssignOperation.To>
+                    <ui:AssignOperation.Value>
+                      <InArgument x:TypeArguments="x:String">[in_itemFields("invoiceItemDate")(itemIndex)]</InArgument>
+                    </ui:AssignOperation.Value>
+                  </ui:AssignOperation>
+                </scg:List>
+              </ui:MultipleAssign.AssignOperations>
+            </ui:MultipleAssign>
+            <ui:CommentOut DisplayName="Comment Out (For Debugging)" sap:VirtualizedContainerService.HintSize="569,230" sap2010:WorkflowViewState.IdRef="CommentOut_1">
+              <ui:CommentOut.Body>
+                <Sequence DisplayName="Ignored Activities" sap:VirtualizedContainerService.HintSize="304,152" sap2010:WorkflowViewState.IdRef="Sequence_3">
+                  <sap:WorkflowViewStateService.ViewState>
+                    <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                      <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                    </scg:Dictionary>
+                  </sap:WorkflowViewStateService.ViewState>
+                  <Assign DisplayName="Assign file name to a column" sap:VirtualizedContainerService.HintSize="262,60" sap2010:WorkflowViewState.IdRef="Assign_4">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:String">[invoiceRow(CInt(in_config("invoiceFile").ToString))]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:String">[in_fileName]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                </Sequence>
+              </ui:CommentOut.Body>
+            </ui:CommentOut>
+            <Switch x:TypeArguments="x:String" DisplayName="Switch set Department " Expression="[reportedDepartment]" sap:VirtualizedContainerService.HintSize="569,332" sap2010:WorkflowViewState.IdRef="Switch`1_1">
+              <Assign x:Key="Foreclosure" DisplayName="Assign Type" sap:VirtualizedContainerService.HintSize="262,60" sap2010:WorkflowViewState.IdRef="Assign_5">
+                <Assign.To>
+                  <OutArgument x:TypeArguments="x:String">[invoiceRow(cint(in_config("invoiceType").ToString))]</OutArgument>
+                </Assign.To>
+                <Assign.Value>
+                  <InArgument x:TypeArguments="x:String">[in_invoiceFields("invoiceType")]</InArgument>
+                </Assign.Value>
+              </Assign>
+              <ui:Comment x:Key="Title Fee" DisplayName="Placeholder case for Title Fee specific fields" sap:VirtualizedContainerService.HintSize="334,55" sap2010:WorkflowViewState.IdRef="Comment_1" Text="// Nothing here for now" />
+              <ui:Comment x:Key="Bankruptcy" DisplayName="Placeholder case for Bankruptcy specific fields" sap:VirtualizedContainerService.HintSize="334,55" sap2010:WorkflowViewState.IdRef="Comment_2" Text="// Nothing here for now" />
+              <ui:Comment x:Key="Property Services" DisplayName="Placeholder case for Property Services specific fields" sap:VirtualizedContainerService.HintSize="334,55" sap2010:WorkflowViewState.IdRef="Comment_3" Text="// Nothing here for now" />
+              <ui:Comment x:Key="Default" DisplayName="Placeholder case for Default specific fields" sap:VirtualizedContainerService.HintSize="334,55" sap2010:WorkflowViewState.IdRef="Comment_4" Text="// Nothing here for now" />
+            </Switch>
+            <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[invoiceRow]" DataTable="[in_dt_template]" DisplayName="Add 1 invoice item to data table" sap:VirtualizedContainerService.HintSize="569,22" sap2010:WorkflowViewState.IdRef="AddDataRow_2" />
+          </Sequence>
+        </ActivityAction>
+      </ui:ForEach.Body>
+    </ui:ForEach>
+    <ui:AppendRange DataTable="[in_dt_template]" DisplayName="Append data table to excel spreadsheet" sap:VirtualizedContainerService.HintSize="647,115" sap2010:WorkflowViewState.IdRef="AppendRange_1" SheetName="Items" WorkbookPath="[in_File]" />
+  </Sequence>
+</Activity>
